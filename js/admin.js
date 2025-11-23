@@ -90,20 +90,30 @@ function renderSubmissionsTable(data) {
     `;
     
     data.forEach(row => {
-        const statusClass = getStatusClass(row.status);
+        const statusClass = getStatusClass(row.Status || row.status || 'Pending');
+        const fullName = row['Full Name'] || row.fullName || row.fullname || 'N/A';
+        const gradeLevel = row['Grade Level'] || row.gradeLevel || row.gradelevel || 'N/A';
+        const schoolLevel = row['School Level'] || row.schoolLevel || row.schoollevel || 'N/A';
+        const fileType = row['File Type'] || row.fileType || row.filetype || 'N/A';
+        const fileLink = row['File Link'] || row.fileLink || row.filelink || '#';
+        const timestamp = row['Timestamp'] || row.timestamp || new Date();
+        const status = row['Status'] || row.status || 'Pending';
+        const remarks = row['Admin Remarks'] || row.adminRemarks || row.adminremarks || row['Remarks'] || '-';
+        const id = row['ID'] || row.id;
+        
         html += `
             <tr>
-                <td>${row.fullName}</td>
-                <td>${row.gradeLevel}</td>
-                <td>${row.schoolLevel}</td>
-                <td>${row.fileType}</td>
-                <td>${formatDate(row.timestamp)}</td>
-                <td><a href="${row.fileLink}" target="_blank">View File</a></td>
-                <td><span class="status-badge ${statusClass}">${row.status}</span></td>
-                <td>${row.adminRemarks || '-'}</td>
+                <td>${fullName}</td>
+                <td>${gradeLevel}</td>
+                <td>${schoolLevel}</td>
+                <td>${fileType}</td>
+                <td>${formatDate(timestamp)}</td>
+                <td><a href="${fileLink}" target="_blank">View File</a></td>
+                <td><span class="status-badge ${statusClass}">${status}</span></td>
+                <td>${remarks}</td>
                 <td class="action-buttons">
-                    <button class="btn-action btn-edit" onclick="openStatusModal('${row.id}', 'submission')">Edit</button>
-                    <button class="btn-danger" onclick="deleteSubmission('${row.id}')">Delete</button>
+                    <button class="btn-action btn-edit" onclick="openStatusModal('${id}', 'submission')">Edit</button>
+                    <button class="btn-danger" onclick="deleteSubmission('${id}')">Delete</button>
                 </td>
             </tr>
         `;
@@ -138,19 +148,28 @@ function renderAttendanceTable(data) {
     `;
     
     data.forEach(row => {
-        const statusClass = getStatusClass(row.status);
-        const fullName = `${row.surname}, ${row.firstName} ${row.middleName || ''}`.trim();
+        const statusClass = getStatusClass(row.Status || row.status || 'Pending');
+        const surname = row['Surname'] || row.surname || '';
+        const firstName = row['First Name'] || row.firstName || row.firstname || '';
+        const middleName = row['Middle Name'] || row.middleName || row.middlename || '';
+        const fullName = `${surname}, ${firstName} ${middleName}`.trim();
+        const selfieLink = row['Selfie Link'] || row.selfieLink || row.selfielink || '#';
+        const timestamp = row['Timestamp'] || row.timestamp || new Date();
+        const status = row['Status'] || row.status || 'Pending';
+        const remarks = row['Admin Remarks'] || row.adminRemarks || row.adminremarks || '-';
+        const id = row['ID'] || row.id;
+        
         html += `
             <tr>
                 <td>${fullName}</td>
-                <td>${formatDate(row.timestamp)}</td>
-                <td>${formatTime(row.timestamp)}</td>
-                <td><a href="${row.selfieLink}" target="_blank">View Photo</a></td>
-                <td><span class="status-badge ${statusClass}">${row.status}</span></td>
-                <td>${row.adminRemarks || '-'}</td>
+                <td>${formatDate(timestamp)}</td>
+                <td>${formatTime(timestamp)}</td>
+                <td><a href="${selfieLink}" target="_blank">View Photo</a></td>
+                <td><span class="status-badge ${statusClass}">${status}</span></td>
+                <td>${remarks}</td>
                 <td class="action-buttons">
-                    <button class="btn-action btn-edit" onclick="openStatusModal('${row.id}', 'attendance')">Edit</button>
-                    <button class="btn-danger" onclick="deleteAttendance('${row.id}')">Delete</button>
+                    <button class="btn-action btn-edit" onclick="openStatusModal('${id}', 'attendance')">Edit</button>
+                    <button class="btn-danger" onclick="deleteAttendance('${id}')">Delete</button>
                 </td>
             </tr>
         `;
@@ -166,11 +185,11 @@ function openStatusModal(id, type) {
     
     // Find current data
     const data = type === 'submission' ? submissions : attendance;
-    const item = data.find(d => d.id === id);
+    const item = data.find(d => (d.ID || d.id) === id);
     
     if (item) {
-        document.getElementById('modalStatus').value = item.status;
-        document.getElementById('modalRemarks').value = item.adminRemarks || '';
+        document.getElementById('modalStatus').value = item.Status || item.status || 'Pending';
+        document.getElementById('modalRemarks').value = item['Admin Remarks'] || item.adminRemarks || item.adminremarks || '';
     }
     
     document.getElementById('actionModal').classList.add('active');
