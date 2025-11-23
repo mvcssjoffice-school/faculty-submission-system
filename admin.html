@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>👨‍💼 Admin Dashboard</h1>
+            <nav>
+                <a href="index.html">Submissions</a>
+                <a href="attendance.html">Attendance</a>
+                <a href="admin.html" class="active">Admin Dashboard</a>
+            </nav>
+        </header>
+
+        <main>
+            <div class="dashboard-tabs">
+                <button class="tab-btn active" onclick="switchTab('submissions')">📚 Lesson Plans & Grading Sheets</button>
+                <button class="tab-btn" onclick="switchTab('attendance')">✅ Attendance Logs</button>
+            </div>
+
+            <!-- Submissions Dashboard -->
+            <div id="submissionsTab" class="tab-content active">
+                <div class="dashboard-header">
+                    <h2>Lesson Plans & Grading Sheets</h2>
+                    <button onclick="loadSubmissions()" class="btn-secondary">🔄 Refresh</button>
+                </div>
+                <div id="submissionsTable" class="table-container">
+                    <p class="loading">Loading submissions...</p>
+                </div>
+            </div>
+
+            <!-- Attendance Dashboard -->
+            <div id="attendanceTab" class="tab-content">
+                <div class="dashboard-header">
+                    <h2>Faculty Attendance Logs</h2>
+                    <button onclick="loadAttendance()" class="btn-secondary">🔄 Refresh</button>
+                </div>
+                <div id="attendanceTable" class="table-container">
+                    <p class="loading">Loading attendance records...</p>
+                </div>
+            </div>
+
+            <!-- Action Modal -->
+            <div id="actionModal" class="modal">
+                <div class="modal-content">
+                    <span class="close" onclick="closeModal()">&times;</span>
+                    <h3 id="modalTitle">Update Status</h3>
+                    <div class="modal-body">
+                        <input type="hidden" id="modalRowId">
+                        <input type="hidden" id="modalType">
+                        
+                        <div class="form-group">
+                            <label>Status:</label>
+                            <select id="modalStatus" class="modal-select">
+                                <option value="Approved">✓ Approved</option>
+                                <option value="Rejected">✗ Rejected</option>
+                                <option value="For Revision">📝 For Revision</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Remarks:</label>
+                            <textarea id="modalRemarks" rows="4" placeholder="Enter your feedback..."></textarea>
+                        </div>
+                        
+                        <div class="modal-actions">
+                            <button onclick="saveStatus()" class="btn-primary">Save Changes</button>
+                            <button onclick="closeModal()" class="btn-secondary">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>&copy; 2024 Faculty Submission System</p>
+        </footer>
+    </div>
+
+    <script src="config.js"></script>
+    <script src="js/admin.js"></script>
+</body>
+</html>

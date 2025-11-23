@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson Plan & Grade Sheet Submission</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📚 Lesson Plan & Grade Sheet Submission</h1>
+            <nav>
+                <a href="index.html" class="active">Submissions</a>
+                <a href="attendance.html">Attendance</a>
+                <a href="admin.html">Admin Dashboard</a>
+            </nav>
+        </header>
+
+        <main>
+            <form id="submissionForm" class="form-card">
+                <h2>Submit Your Documents</h2>
+                
+                <div class="form-group">
+                    <label for="fullName">Full Name *</label>
+                    <input type="text" id="fullName" name="fullName" required placeholder="Juan Dela Cruz">
+                </div>
+
+                <div class="form-group">
+                    <label for="gradeLevel">Grade Level / Subject *</label>
+                    <input type="text" id="gradeLevel" name="gradeLevel" required placeholder="Grade 7 - Mathematics">
+                </div>
+
+                <div class="form-group">
+                    <label for="schoolLevel">School Level *</label>
+                    <select id="schoolLevel" name="schoolLevel" required>
+                        <option value="">Select Level</option>
+                        <option value="Elementary">Elementary</option>
+                        <option value="High School">High School</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Lesson Plans *</label>
+                    <div class="file-upload-group">
+                        <label class="file-label">
+                            <input type="file" id="dailyLessonPlan" name="dailyLessonPlan" accept=".pdf,.doc,.docx">
+                            <span>Daily Lesson Plan</span>
+                        </label>
+                        <label class="file-label">
+                            <input type="file" id="weeklyLessonPlan" name="weeklyLessonPlan" accept=".pdf,.doc,.docx">
+                            <span>Weekly Lesson Plan</span>
+                        </label>
+                        <label class="file-label">
+                            <input type="file" id="quarterlyLessonPlan" name="quarterlyLessonPlan" accept=".pdf,.doc,.docx">
+                            <span>Quarterly Lesson Plan</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="gradingSheets">Grading Sheets *</label>
+                    <input type="file" id="gradingSheets" name="gradingSheets" accept=".pdf,.xls,.xlsx,.doc,.docx" multiple>
+                    <small>You can select multiple files. Include Quarter, Subject, and Section in filename.</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="remarks">Additional Remarks (Optional)</label>
+                    <textarea id="remarks" name="remarks" rows="3" placeholder="Any additional notes..."></textarea>
+                </div>
+
+                <button type="submit" class="btn-primary">Submit Documents</button>
+            </form>
+
+            <div id="statusMessage" class="status-message"></div>
+        </main>
+
+        <footer>
+            <p>&copy; 2024 Faculty Submission System</p>
+        </footer>
+    </div>
+
+    <script src="config.js"></script>
+    <script src="js/submission.js"></script>
+</body>
+</html>

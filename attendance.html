@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Faculty Attendance Submission</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>✅ Faculty Attendance Submission</h1>
+            <nav>
+                <a href="index.html">Submissions</a>
+                <a href="attendance.html" class="active">Attendance</a>
+                <a href="admin.html">Admin Dashboard</a>
+            </nav>
+        </header>
+
+        <main>
+            <form id="attendanceForm" class="form-card">
+                <h2>Daily Attendance Check-in</h2>
+                
+                <div class="form-group">
+                    <label for="surname">Surname *</label>
+                    <input type="text" id="surname" name="surname" required placeholder="Dela Cruz">
+                </div>
+
+                <div class="form-group">
+                    <label for="firstName">First Name *</label>
+                    <input type="text" id="firstName" name="firstName" required placeholder="Juan">
+                </div>
+
+                <div class="form-group">
+                    <label for="middleName">Middle Name</label>
+                    <input type="text" id="middleName" name="middleName" placeholder="Santos">
+                </div>
+
+                <div class="form-group">
+                    <label for="selfie">Upload Selfie *</label>
+                    <input type="file" id="selfie" name="selfie" accept="image/*" capture="user" required>
+                    <small>Take or upload a photo for attendance verification</small>
+                </div>
+
+                <div class="form-group">
+                    <label>Reflection Questions *</label>
+                    <div class="reflection-questions">
+                        <div class="question-group">
+                            <label>1. What are your main objectives for today?</label>
+                            <textarea name="reflection1" required rows="2"></textarea>
+                        </div>
+                        <div class="question-group">
+                            <label>2. What teaching strategy will you focus on today?</label>
+                            <textarea name="reflection2" required rows="2"></textarea>
+                        </div>
+                        <div class="question-group">
+                            <label>3. How do you plan to engage students in learning?</label>
+                            <textarea name="reflection3" required rows="2"></textarea>
+                        </div>
+                        <div class="question-group">
+                            <label>4. What challenges do you anticipate today?</label>
+                            <textarea name="reflection4" required rows="2"></textarea>
+                        </div>
+                        <div class="question-group">
+                            <label>5. How will you assess student understanding?</label>
+                            <textarea name="reflection5" required rows="2"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="anecdotalRemarks">Anecdotal Remarks (Optional)</label>
+                    <textarea id="anecdotalRemarks" name="anecdotalRemarks" rows="3" placeholder="Any additional observations or notes..."></textarea>
+                </div>
+
+                <button type="submit" class="btn-primary">Submit Attendance</button>
+            </form>
+
+            <div id="statusMessage" class="status-message"></div>
+        </main>
+
+        <footer>
+            <p>&copy; 2024 Faculty Submission System</p>
+        </footer>
+    </div>
+
+    <script src="config.js"></script>
+    <script src="js/attendance.js"></script>
+</body>
+</html>
