@@ -5,84 +5,534 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard</title>
     <link rel="stylesheet" href="css/styles.css">
+    <style>
+        .login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .login-box {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 400px;
+            width: 90%;
+        }
+        .login-box h2 {
+            color: #667eea;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+        .login-form .form-group {
+            margin-bottom: 20px;
+        }
+        .login-form input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+        }
+        .login-form input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        .error-message {
+            color: #dc3545;
+            font-size: 0.9em;
+            margin-top: 10px;
+            display: none;
+        }
+        .error-message.show {
+            display: block;
+        }
+        .dashboard-container {
+            display: none;
+        }
+        .dashboard-container.authenticated {
+            display: block;
+        }
+        .logout-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        .logout-btn:hover {
+            background: #c82333;
+        }
+        .user-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        .manage-users-btn {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+        .manage-users-btn:hover {
+            background: #218838;
+        }
+        .user-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .user-tab-btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            background: #e0e0e0;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        .user-tab-btn.active {
+            background: #667eea;
+            color: white;
+        }
+        .user-section {
+            display: none;
+        }
+        .user-section.active {
+            display: block;
+        }
+        .user-card {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: #f8f9fa;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+        .user-card.faculty-card {
+            border-left-color: #28a745;
+        }
+        .user-actions {
+            display: flex;
+            gap: 5px;
+        }
+        .btn-edit-user {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.85em;
+        }
+        .btn-edit-user:hover {
+            background: #0056b3;
+        }
+    </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>👨‍💼 Admin Dashboard</h1>
-            <nav>
-                <a href="index.html">Submissions</a>
-                <a href="attendance.html">Attendance</a>
-                <a href="admin.html" class="active">Admin Dashboard</a>
-            </nav>
-        </header>
-
-        <main>
-            <div class="dashboard-tabs">
-                <button class="tab-btn active" onclick="switchTab('submissions')">📚 Lesson Plans & Grading Sheets</button>
-                <button class="tab-btn" onclick="switchTab('attendance')">✅ Attendance Logs</button>
-            </div>
-
-            <!-- Submissions Dashboard -->
-            <div id="submissionsTab" class="tab-content active">
-                <div class="dashboard-header">
-                    <h2>Lesson Plans & Grading Sheets</h2>
-                    <button onclick="loadSubmissions()" class="btn-secondary">🔄 Refresh</button>
+    <!-- Login Screen -->
+    <div id="loginContainer" class="login-container">
+        <div class="login-box">
+            <h2>🔐 Admin Login</h2>
+            <form id="loginForm" class="login-form">
+                <div class="form-group">
+                    <label>Username</label>
+                    <input type="text" id="username" required placeholder="Enter username">
                 </div>
-                <div id="submissionsTable" class="table-container">
-                    <p class="loading">Loading submissions...</p>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="password" required placeholder="Enter password">
                 </div>
-            </div>
+                <button type="submit" class="btn-primary" style="width: 100%;">Login</button>
+                <p class="error-message" id="loginError">Invalid username or password</p>
+            </form>
+        </div>
+    </div>
 
-            <!-- Attendance Dashboard -->
-            <div id="attendanceTab" class="tab-content">
-                <div class="dashboard-header">
-                    <h2>Faculty Attendance Logs</h2>
-                    <button onclick="loadAttendance()" class="btn-secondary">🔄 Refresh</button>
+    <!-- Dashboard (Hidden until authenticated) -->
+    <div id="dashboardContainer" class="dashboard-container">
+        <div class="container">
+            <header>
+                <h1>👨‍💼 Admin Dashboard</h1>
+                <div class="user-info">
+                    <span>Logged in as: <strong id="currentUser"></strong></span>
+                    <div>
+                        <button class="manage-users-btn" onclick="openUserManagement()">👥 Manage Users</button>
+                        <button class="logout-btn" onclick="logout()">Logout</button>
+                    </div>
                 </div>
-                <div id="attendanceTable" class="table-container">
-                    <p class="loading">Loading attendance records...</p>
-                </div>
-            </div>
+            </header>
 
-            <!-- Action Modal -->
-            <div id="actionModal" class="modal">
-                <div class="modal-content">
-                    <span class="close" onclick="closeModal()">&times;</span>
-                    <h3 id="modalTitle">Update Status</h3>
-                    <div class="modal-body">
-                        <input type="hidden" id="modalRowId">
-                        <input type="hidden" id="modalType">
-                        
-                        <div class="form-group">
-                            <label>Status:</label>
-                            <select id="modalStatus" class="modal-select">
-                                <option value="Approved">✓ Approved</option>
-                                <option value="Rejected">✗ Rejected</option>
-                                <option value="For Revision">📝 For Revision</option>
-                            </select>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label>Remarks:</label>
-                            <textarea id="modalRemarks" rows="4" placeholder="Enter your feedback..."></textarea>
-                        </div>
-                        
-                        <div class="modal-actions">
-                            <button onclick="saveStatus()" class="btn-primary">Save Changes</button>
-                            <button onclick="closeModal()" class="btn-secondary">Cancel</button>
+            <main>
+                <div class="dashboard-tabs">
+                    <button class="tab-btn active" onclick="switchTab('submissions')">📚 Lesson Plans & Grading Sheets</button>
+                    <button class="tab-btn" onclick="switchTab('attendance')">✅ Attendance Logs</button>
+                </div>
+
+                <!-- Submissions Dashboard -->
+                <div id="submissionsTab" class="tab-content active">
+                    <div class="dashboard-header">
+                        <h2>Lesson Plans & Grading Sheets</h2>
+                        <button onclick="loadSubmissions()" class="btn-secondary">🔄 Refresh</button>
+                    </div>
+                    <div id="submissionsTable" class="table-container">
+                        <p class="loading">Loading submissions...</p>
+                    </div>
+                </div>
+
+                <!-- Attendance Dashboard -->
+                <div id="attendanceTab" class="tab-content">
+                    <div class="dashboard-header">
+                        <h2>Faculty Attendance Logs</h2>
+                        <button onclick="loadAttendance()" class="btn-secondary">🔄 Refresh</button>
+                    </div>
+                    <div id="attendanceTable" class="table-container">
+                        <p class="loading">Loading attendance records...</p>
+                    </div>
+                </div>
+
+                <!-- Action Modal -->
+                <div id="actionModal" class="modal">
+                    <div class="modal-content">
+                        <span class="close" onclick="closeModal()">&times;</span>
+                        <h3 id="modalTitle">Update Status</h3>
+                        <div class="modal-body">
+                            <input type="hidden" id="modalRowId">
+                            <input type="hidden" id="modalType">
+                            
+                            <div class="form-group">
+                                <label>Status:</label>
+                                <select id="modalStatus" class="modal-select">
+                                    <option value="Approved">✓ Approved</option>
+                                    <option value="Rejected">✗ Rejected</option>
+                                    <option value="For Revision">📝 For Revision</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Remarks:</label>
+                                <textarea id="modalRemarks" rows="4" placeholder="Enter your feedback..."></textarea>
+                            </div>
+                            
+                            <div class="modal-actions">
+                                <button onclick="saveStatus()" class="btn-primary">Save Changes</button>
+                                <button onclick="closeModal()" class="btn-secondary">Cancel</button>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </main>
 
-        <footer>
-            <p>&copy; 2024 Faculty Submission System</p>
-        </footer>
+                <!-- User Management Modal -->
+                <div id="userManagementModal" class="modal">
+                    <div class="modal-content" style="max-width: 700px;">
+                        <span class="close" onclick="closeUserManagement()">&times;</span>
+                        <h3>👥 User Management System</h3>
+                        <div class="modal-body">
+                            
+                            <!-- User Type Tabs -->
+                            <div class="user-tabs">
+                                <button class="user-tab-btn active" onclick="switchUserTab('admin')">👨‍💼 Admin Users</button>
+                                <button class="user-tab-btn" onclick="switchUserTab('faculty')">👨‍🏫 Faculty Users</button>
+                            </div>
+
+                            <!-- Admin Users Section -->
+                            <div id="adminUserSection" class="user-section active">
+                                <h4>Add New Admin</h4>
+                                <div style="margin-bottom: 20px;">
+                                    <div class="form-group">
+                                        <input type="text" id="newAdminUsername" placeholder="Admin Username" style="width: 100%; margin-bottom: 10px;">
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="password" id="newAdminPassword" placeholder="Admin Password" style="width: 100%; margin-bottom: 10px;">
+                                    </div>
+                                    <button onclick="addUser('admin')" class="btn-primary">Add Admin User</button>
+                                </div>
+                                
+                                <h4>Current Admin Users</h4>
+                                <div id="adminUsersList"></div>
+                            </div>
+
+                            <!-- Faculty Users Section -->
+                            <div id="facultyUserSection" class="user-section">
+                                <h4>Add New Faculty</h4>
+                                <div style="margin-bottom: 20px;">
+                                    <div class="form-group">
+                                        <input type="text" id="newFacultyUsername" placeholder="Faculty Username" style="width: 100%; margin-bottom: 10px;">
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="password" id="newFacultyPassword" placeholder="Faculty Password" style="width: 100%; margin-bottom: 10px;">
+                                    </div>
+                                    <button onclick="addUser('faculty')" class="btn-primary">Add Faculty User</button>
+                                </div>
+                                
+                                <h4>Current Faculty Users</h4>
+                                <div id="facultyUsersList"></div>
+                            </div>
+
+                            <!-- Edit User Modal -->
+                            <div id="editUserModal" class="modal">
+                                <div class="modal-content" style="max-width: 400px;">
+                                    <span class="close" onclick="closeEditUser()">&times;</span>
+                                    <h3>Edit User</h3>
+                                    <div class="modal-body">
+                                        <input type="hidden" id="editUserRole">
+                                        <input type="hidden" id="editUserOldUsername">
+                                        <div class="form-group">
+                                            <label>Username:</label>
+                                            <input type="text" id="editUsername" style="width: 100%;">
+                                        </div>
+                                        <div class="form-group">
+                                            <label>New Password:</label>
+                                            <input type="password" id="editPassword" placeholder="Leave blank to keep current" style="width: 100%;">
+                                        </div>
+                                        <div class="modal-actions">
+                                            <button onclick="saveUserEdit()" class="btn-primary">Save Changes</button>
+                                            <button onclick="closeEditUser()" class="btn-secondary">Cancel</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </main>
+
+            <footer>
+                <p>&copy; 2024 Faculty Submission System</p>
+            </footer>
+        </div>
     </div>
 
     <script src="config.js"></script>
+    <script src="users.js"></script>
     <script src="js/admin.js"></script>
+    <script>
+        let currentUserTab = 'admin';
+
+        // Check if already logged in
+        window.onload = function() {
+            const loggedInUser = sessionStorage.getItem('adminUser');
+            const adminUsers = getAdminUsers();
+            if (loggedInUser && adminUsers[loggedInUser]) {
+                showDashboard(loggedInUser);
+            }
+        };
+
+        // Login form handler
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const adminUsers = getAdminUsers();
+            
+            if (adminUsers[username] && adminUsers[username].password === password) {
+                sessionStorage.setItem('adminUser', username);
+                showDashboard(username);
+            } else {
+                document.getElementById('loginError').classList.add('show');
+                document.getElementById('password').value = '';
+            }
+        });
+
+        function showDashboard(username) {
+            document.getElementById('loginContainer').style.display = 'none';
+            document.getElementById('dashboardContainer').classList.add('authenticated');
+            document.getElementById('currentUser').textContent = username;
+            loadSubmissions();
+        }
+
+        function logout() {
+            sessionStorage.removeItem('adminUser');
+            location.reload();
+        }
+
+        function openUserManagement() {
+            loadUsersList();
+            document.getElementById('userManagementModal').classList.add('active');
+        }
+
+        function closeUserManagement() {
+            document.getElementById('userManagementModal').classList.remove('active');
+        }
+
+        function switchUserTab(tab) {
+            currentUserTab = tab;
+            
+            // Update tab buttons
+            document.querySelectorAll('.user-tab-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // Update sections
+            document.querySelectorAll('.user-section').forEach(section => section.classList.remove('active'));
+            document.getElementById(tab + 'UserSection').classList.add('active');
+            
+            loadUsersList();
+        }
+
+        function loadUsersList() {
+            // Load Admin Users
+            const adminUsers = getAdminUsers();
+            const adminList = document.getElementById('adminUsersList');
+            let adminHtml = '<div style="max-height: 300px; overflow-y: auto;">';
+            
+            Object.keys(adminUsers).forEach(username => {
+                adminHtml += `
+                    <div class="user-card">
+                        <div>
+                            <strong>${username}</strong>
+                            <span style="color: #666; font-size: 0.9em; margin-left: 10px;">Admin</span>
+                        </div>
+                        <div class="user-actions">
+                            <button onclick="editUser('admin', '${username}')" class="btn-edit-user">Edit</button>
+                            <button onclick="deleteUser('admin', '${username}')" class="btn-danger">Delete</button>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            adminHtml += '</div>';
+            adminList.innerHTML = adminHtml;
+
+            // Load Faculty Users
+            const facultyUsers = getFacultyUsers();
+            const facultyList = document.getElementById('facultyUsersList');
+            let facultyHtml = '<div style="max-height: 300px; overflow-y: auto;">';
+            
+            Object.keys(facultyUsers).forEach(username => {
+                facultyHtml += `
+                    <div class="user-card faculty-card">
+                        <div>
+                            <strong>${username}</strong>
+                            <span style="color: #666; font-size: 0.9em; margin-left: 10px;">Faculty</span>
+                        </div>
+                        <div class="user-actions">
+                            <button onclick="editUser('faculty', '${username}')" class="btn-edit-user">Edit</button>
+                            <button onclick="deleteUser('faculty', '${username}')" class="btn-danger">Delete</button>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            facultyHtml += '</div>';
+            facultyList.innerHTML = facultyHtml;
+        }
+
+        function addUser(role) {
+            const usernameId = role === 'admin' ? 'newAdminUsername' : 'newFacultyUsername';
+            const passwordId = role === 'admin' ? 'newAdminPassword' : 'newFacultyPassword';
+            
+            const username = document.getElementById(usernameId).value.trim();
+            const password = document.getElementById(passwordId).value.trim();
+            
+            if (!username || !password) {
+                alert('Please enter both username and password');
+                return;
+            }
+            
+            const users = role === 'admin' ? getAdminUsers() : getFacultyUsers();
+            
+            if (users[username]) {
+                alert('Username already exists!');
+                return;
+            }
+            
+            const roleLabel = role === 'admin' ? 'Admin' : 'Faculty';
+            alert(`✅ User added successfully!\n\n⚠️ IMPORTANT: To save permanently:\n\n1. Open users.js in your code editor\n2. Find the ${role} section in USERS object\n3. Add this line:\n'${username}': { password: '${password}', role: '${role}' },\n\n4. Save and upload to GitHub\n\nThis user will work for this session only until you update the code.`);
+            
+            USERS[role][username] = { password: password, role: role };
+            document.getElementById(usernameId).value = '';
+            document.getElementById(passwordId).value = '';
+            loadUsersList();
+        }
+
+        function editUser(role, username) {
+            document.getElementById('editUserRole').value = role;
+            document.getElementById('editUserOldUsername').value = username;
+            document.getElementById('editUsername').value = username;
+            document.getElementById('editPassword').value = '';
+            document.getElementById('editUserModal').classList.add('active');
+        }
+
+        function closeEditUser() {
+            document.getElementById('editUserModal').classList.remove('active');
+        }
+
+        function saveUserEdit() {
+            const role = document.getElementById('editUserRole').value;
+            const oldUsername = document.getElementById('editUserOldUsername').value;
+            const newUsername = document.getElementById('editUsername').value.trim();
+            const newPassword = document.getElementById('editPassword').value.trim();
+            
+            if (!newUsername) {
+                alert('Username cannot be empty');
+                return;
+            }
+            
+            const users = role === 'admin' ? getAdminUsers() : getFacultyUsers();
+            
+            // Check if new username already exists (and it's different from old)
+            if (newUsername !== oldUsername && users[newUsername]) {
+                alert('Username already exists!');
+                return;
+            }
+            
+            let message = `⚠️ IMPORTANT: To save changes permanently:\n\n1. Open users.js in your code editor\n2. Find '${oldUsername}' in the ${role} section\n`;
+            
+            if (newUsername !== oldUsername) {
+                message += `3. Change the username to '${newUsername}'\n`;
+            }
+            
+            if (newPassword) {
+                message += `4. Change the password to '${newPassword}'\n`;
+            }
+            
+            message += `\n5. Save and upload to GitHub\n\nChanges are temporary for this session only.`;
+            
+            alert(message);
+            
+            // Apply changes in memory
+            const userData = users[oldUsername];
+            delete users[oldUsername];
+            users[newUsername] = {
+                password: newPassword || userData.password,
+                role: role
+            };
+            
+            closeEditUser();
+            loadUsersList();
+        }
+
+        function deleteUser(role, username) {
+            if (role === 'admin' && username === sessionStorage.getItem('adminUser')) {
+                alert('You cannot delete your own account while logged in!');
+                return;
+            }
+            
+            if (confirm(`Are you sure you want to delete ${role} user: ${username}?`)) {
+                alert(`⚠️ IMPORTANT: To permanently delete:\n\n1. Open users.js in your code editor\n2. Find '${username}' in the ${role} section\n3. Remove that entire line\n4. Save and upload to GitHub\n\nDeletion is temporary for this session only.`);
+                
+                const users = role === 'admin' ? getAdminUsers() : getFacultyUsers();
+                delete users[username];
+                loadUsersList();
+            }
+        }
+    </script>
 </body>
 </html>

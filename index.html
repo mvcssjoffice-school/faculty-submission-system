@@ -5,82 +5,220 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lesson Plan & Grade Sheet Submission</title>
     <link rel="stylesheet" href="css/styles.css">
+    <style>
+        .login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .login-box {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 400px;
+            width: 90%;
+        }
+        .login-box h2 {
+            color: #667eea;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+        .login-form .form-group {
+            margin-bottom: 20px;
+        }
+        .login-form input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+        }
+        .login-form input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        .error-message {
+            color: #dc3545;
+            font-size: 0.9em;
+            margin-top: 10px;
+            display: none;
+        }
+        .error-message.show {
+            display: block;
+        }
+        .content-container {
+            display: none;
+        }
+        .content-container.authenticated {
+            display: block;
+        }
+        .logout-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 600;
+            float: right;
+        }
+        .logout-btn:hover {
+            background: #c82333;
+        }
+        .user-info {
+            background: #f8f9fa;
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+    </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>📚 Lesson Plan & Grade Sheet Submission</h1>
-            <nav>
-                <a href="index.html" class="active">Submissions</a>
-                <a href="attendance.html">Attendance</a>
-                <a href="admin.html">Admin Dashboard</a>
-            </nav>
-        </header>
-
-        <main>
-            <form id="submissionForm" class="form-card">
-                <h2>Submit Your Documents</h2>
-                
+    <!-- Login Screen -->
+    <div id="loginContainer" class="login-container">
+        <div class="login-box">
+            <h2>🔐 Faculty Login</h2>
+            <p style="text-align: center; color: #666; margin-bottom: 20px;">Lesson Plan & Grade Sheet Submission</p>
+            <form id="loginForm" class="login-form">
                 <div class="form-group">
-                    <label for="fullName">Full Name *</label>
-                    <input type="text" id="fullName" name="fullName" required placeholder="Juan Dela Cruz">
+                    <label>Username</label>
+                    <input type="text" id="username" required placeholder="Enter username">
                 </div>
-
                 <div class="form-group">
-                    <label for="gradeLevel">Grade Level / Subject *</label>
-                    <input type="text" id="gradeLevel" name="gradeLevel" required placeholder="Grade 7 - Mathematics">
+                    <label>Password</label>
+                    <input type="password" id="password" required placeholder="Enter password">
                 </div>
-
-                <div class="form-group">
-                    <label for="schoolLevel">School Level *</label>
-                    <select id="schoolLevel" name="schoolLevel" required>
-                        <option value="">Select Level</option>
-                        <option value="Elementary">Elementary</option>
-                        <option value="High School">High School</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label>Lesson Plans *</label>
-                    <div class="file-upload-group">
-                        <label class="file-label">
-                            <input type="file" id="dailyLessonPlan" name="dailyLessonPlan" accept=".pdf,.doc,.docx">
-                            <span>Daily Lesson Plan</span>
-                        </label>
-                        <label class="file-label">
-                            <input type="file" id="weeklyLessonPlan" name="weeklyLessonPlan" accept=".pdf,.doc,.docx">
-                            <span>Weekly Lesson Plan</span>
-                        </label>
-                        <label class="file-label">
-                            <input type="file" id="quarterlyLessonPlan" name="quarterlyLessonPlan" accept=".pdf,.doc,.docx">
-                            <span>Quarterly Lesson Plan</span>
-                        </label>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label for="gradingSheets">Grading Sheets *</label>
-                    <input type="file" id="gradingSheets" name="gradingSheets" accept=".pdf,.xls,.xlsx,.doc,.docx" multiple>
-                    <small>You can select multiple files. Include Quarter, Subject, and Section in filename.</small>
-                </div>
-
-                <div class="form-group">
-                    <label for="remarks">Additional Remarks (Optional)</label>
-                    <textarea id="remarks" name="remarks" rows="3" placeholder="Any additional notes..."></textarea>
-                </div>
-
-                <button type="submit" class="btn-primary">Submit Documents</button>
+                <button type="submit" class="btn-primary" style="width: 100%;">Login</button>
+                <p class="error-message" id="loginError">Invalid username or password</p>
             </form>
+        </div>
+    </div>
 
-            <div id="statusMessage" class="status-message"></div>
-        </main>
+    <!-- Main Content (Hidden until authenticated) -->
+    <div id="contentContainer" class="content-container">
+        <div class="container">
+            <header>
+                <h1>📚 Lesson Plan & Grade Sheet Submission</h1>
+                <div class="user-info">
+                    <span>Logged in as: <strong id="currentUser"></strong></span>
+                    <button class="logout-btn" onclick="logout()">Logout</button>
+                </div>
+                <nav>
+                    <a href="index.html" class="active">Submissions</a>
+                    <a href="attendance.html">Attendance</a>
+                </nav>
+            </header>
 
-        <footer>
-            <p>&copy; 2024 Faculty Submission System</p>
-        </footer>
+            <main>
+                <form id="submissionForm" class="form-card">
+                    <h2>Submit Your Documents</h2>
+                    
+                    <div class="form-group">
+                        <label for="fullName">Full Name *</label>
+                        <input type="text" id="fullName" name="fullName" required placeholder="Juan Dela Cruz">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="gradeLevel">Grade Level / Subject *</label>
+                        <input type="text" id="gradeLevel" name="gradeLevel" required placeholder="Grade 7 - Mathematics">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="schoolLevel">School Level *</label>
+                        <select id="schoolLevel" name="schoolLevel" required>
+                            <option value="">Select Level</option>
+                            <option value="Elementary">Elementary</option>
+                            <option value="High School">High School</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Lesson Plans *</label>
+                        <div class="file-upload-group">
+                            <label class="file-label">
+                                <input type="file" id="dailyLessonPlan" name="dailyLessonPlan" accept=".pdf,.doc,.docx">
+                                <span>Daily Lesson Plan</span>
+                            </label>
+                            <label class="file-label">
+                                <input type="file" id="weeklyLessonPlan" name="weeklyLessonPlan" accept=".pdf,.doc,.docx">
+                                <span>Weekly Lesson Plan</span>
+                            </label>
+                            <label class="file-label">
+                                <input type="file" id="quarterlyLessonPlan" name="quarterlyLessonPlan" accept=".pdf,.doc,.docx">
+                                <span>Quarterly Lesson Plan</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="gradingSheets">Grading Sheets *</label>
+                        <input type="file" id="gradingSheets" name="gradingSheets" accept=".pdf,.xls,.xlsx,.doc,.docx" multiple>
+                        <small>You can select multiple files. Include Quarter, Subject, and Section in filename.</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="remarks">Additional Remarks (Optional)</label>
+                        <textarea id="remarks" name="remarks" rows="3" placeholder="Any additional notes..."></textarea>
+                    </div>
+
+                    <button type="submit" class="btn-primary">Submit Documents</button>
+                </form>
+
+                <div id="statusMessage" class="status-message"></div>
+            </main>
+
+            <footer>
+                <p>&copy; 2024 Faculty Submission System</p>
+            </footer>
+        </div>
     </div>
 
     <script src="config.js"></script>
+    <script src="users.js"></script>
     <script src="js/submission.js"></script>
+    <script>
+        // Check if already logged in
+        window.onload = function() {
+            const loggedInUser = sessionStorage.getItem('facultyUser');
+            const facultyUsers = getFacultyUsers();
+            if (loggedInUser && facultyUsers[loggedInUser]) {
+                showContent(loggedInUser);
+            }
+        };
+
+        // Login form handler
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const facultyUsers = getFacultyUsers();
+            
+            if (facultyUsers[username] && facultyUsers[username].password === password) {
+                sessionStorage.setItem('facultyUser', username);
+                showContent(username);
+            } else {
+                document.getElementById('loginError').classList.add('show');
+                document.getElementById('password').value = '';
+            }
+        });
+
+        function showContent(username) {
+            document.getElementById('loginContainer').style.display = 'none';
+            document.getElementById('contentContainer').classList.add('authenticated');
+            document.getElementById('currentUser').textContent = username;
+        }
+
+        function logout() {
+            sessionStorage.removeItem('facultyUser');
+            location.reload();
+        }
+    </script>
 </body>
 </html>
