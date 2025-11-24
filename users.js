@@ -5,17 +5,20 @@ const USERS = {
     // Admin accounts (can access admin dashboard)
     admin: {
         'admin': { password: 'admin123', role: 'admin' },
-        'principal': { password: 'principal2024', role: 'admin' },
-        'headteacher': { password: 'head2024', role: 'admin' }
+        'e.deguzman@mvcs.edu.ph': { password: 'admin123', role: 'admin' },
+        'm.viuya@mvcs.edu.ph': { password: 'admin123', role: 'admin' },
+        'r.deguzman@mvcs.edu.ph': { password: 'admin123', role: 'admin' }
     },
     
     // Faculty accounts (can access submissions and attendance)
     faculty: {
         'faculty': { password: 'faculty123', role: 'faculty' },
-        'teacher1': { password: 'teach2024', role: 'faculty' },
-        'teacher2': { password: 'teach2024', role: 'faculty' },
-        'juan.cruz': { password: 'password123', role: 'faculty' },
-        'maria.santos': { password: 'password123', role: 'faculty' }
+        'gg.deguzman@mvcs.edu.ph': { password: 'teach2025', role: 'faculty' },
+        'g.pagaduan@mvcs.edu.ph': { password: 'teach2025', role: 'faculty' },
+        'j.deguzman@mvcs.edu.ph': { password: 'teach2025', role: 'faculty' },
+        'c.verzon@mvcs.edu.ph': { password: 'teach2025', role: 'faculty' },
+        'ml.ferrer@mvcs.edu.ph': { password: 'teach2025', role: 'faculty' },
+        'e.guillermo@mvcs.edu.ph': { password: 'teach2025', role: 'faculty' }
     }
 };
 
@@ -32,4 +35,5 @@ function getAdminUsers() {
 // Function to get all faculty users
 function getFacultyUsers() {
     return USERS.faculty;
+
 }
